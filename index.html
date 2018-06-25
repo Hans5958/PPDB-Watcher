@@ -140,7 +140,7 @@
                         $("#mainNilai").append("<tr></tr>")
                         $("tr").last().append("<td>" + item[0] + "</td>")
                         $("tr").last().append("<td>" + item[1] + "</td>")
-                        $("tr").last().append("<td><a window.open('https://ppdb.jakarta.go.id/#/020001/detail/" + item[1] + "')>" + item[2] + "</a></td>")
+                        $("tr").last().append("<td><a onclick=\"window.open('https://ppdb.jakarta.go.id/#/020001/detail/" + item[1] + "')\">" + item[2] + "</a></td>")
                         $("tr").last().append("<td>" + item[3] + "</td>")
                     });
                     $("#daftarSekolah")[0].disabled = false
