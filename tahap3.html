@@ -2,168 +2,327 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>PPDB Watcher</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+	<script src="http://momentjs.com/downloads/moment-timezone-with-data.js"></script>
+	<title>PPDB Watcher - Tahap 1 Lokal</title>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49890594-3"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'UA-49890594-3');
+	</script>
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">PPDB Watcher</a>
-            </div>
-            <ul class="nav navbar-nav">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
+			</div>
+			<ul class="nav navbar-nav">
 				<li><a href="tahap1.html">Tahap 1 Lokal</a></li>
 				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
 				<li class="active" ><a href="#">Tahap 3 Umum</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-6">
-                <h1>PPDB Watcher <small>Tahap 3 Umum</small></h1>
-                <br>
-                <p>Pilih sekolah yang ingin dilihat.</p>
-                <form class="form-inline">
-                    <div class="form-group">
-                        <label for="daftarSekolah">Sekolah:</label>
-                        <select class="form-control" id="daftarSekolah">
-							<option value="default">Pilih sekolah...</option>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<h1>PPDB Watcher <small>Tahap 3 Umum</small></h1>
+				<br>
+				<p>Pilih sekolah yang ingin dilihat.</p>
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="daftarSekolah">Sekolah:</label>
+						<select class="form-control" id="daftarSekolah">
+							<option value="">Pilih sekolah...</option>
 						</select>
-                    </div>
-                    <button type="button" class="btn btn-default btn-sm" id="daftarSekolahButton">
+					</div>
+					<button type="button" class="btn btn-default btn-sm" id="daftarSekolahButton">
 						<span class="glyphicon glyphicon-refresh"></span> Refresh
 					</button>
-                </form>
-                <br>
-                <em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
-            </div>
-            <div class="col-xs-6">
-                <h4>Keterangan</h4>
-                <table class="table table-striped table-hover table-condensed">
-                    <tbody>
-                        <tr>
-                            <th>Nama Sekolah</th>
-                            <th id="statNama"></th>
-                        </tr>
-                        <tr>
-                            <th>Kompetensi</th>
-                            <th id="statKomp"></th>
-                        </tr>
-                        <tr>
-                            <th>Bangku Tersedia</th>
-                            <th id="statPagu"></th>
-                        </tr>
-                        <tr>
-                            <th>Peminat</th>
-                            <th id="statPeminat"></th>
-                        </tr>
-                    </tbody>
-                </table>
+					<div class="checkbox hidden">
+						<label><input id="autoUpdate" type="checkbox" value="" checked="false"> <span class="glyphicon glyphicon-refresh"></span> Auto-update</label>
+					</div>
+				</form>
+				<br>
+				<h4>Waktu Sebelum Pendaftaran</h5>
+				<h3 style="margin-top:0" id="clock"></h5>
+				<br>
+				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
+				<br>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<h4>Keterangan</h4>
+				<table class="table table-striped table-hover table-condensed">
+					<tbody>
+						<tr>
+							<th>Nama Sekolah</th>
+							<th id="statNama"></th>
+						</tr>
+						<tr>
+							<th>Kompetensi</th>
+							<th id="statKomp"></th>
+						</tr>
+						<tr>
+							<th>Bangku Terisi</th>
+							<th id="statPagu"></th>
+						</tr>
+						<tr>
+							<th>Nilai Tertinggi</th>
+							<th id="statMax"></th>
+						</tr>
+						<tr>
+							<th>Nilai Terendah</th>
+							<th id="statMin"></th>
+						</tr>
+						<tr>
+							<th>Rata-rata</th>
+							<th id="statAvg"></th>
+						</tr>
+						<tr>
+							<th>Data Terakhir</th>
+							<th id="statLastUpd"></th>
+						</tr>
+					</tbody>
+				</table>
 				<a href="#" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
 				<a href="#" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
-            </div>
-        </div>
-        <p>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>No. Urut</th>
-                        <th>No. Daftar</th>
-                        <th>Nama</th>
-                        <th>NA</th>
-                    </tr>
-                </thead>
-                <tbody id="mainNilai">
-                </tbody>
-            </table>
-    </div>
-    </div>
+			</div>
+		</div>
+		<p>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>No. Urut</th>
+						<th>No. Daftar</th>
+						<th>Nama</th>
+						<th>NA</th>
+						<th>NUN</th>
+					</tr>
+				</thead>
+				<tbody id="mainNilai">
+				</tbody>
+			</table>
+	</div>
+	</div>
 
-    <script>
-        var dataSekolah = {}
-        var cors = "https://api.codetabs.com/cors-proxy/"
+	<script>
+		var nowID = ""
+		var dataSekolah = {}
 
-        function dataSekolah1() {
-            var rawData = cors + "https://ppdb.jakarta.go.id/pagu/3-sma-reguler.json";
-            $.getJSON(rawData)
-                .done(function (rawData) {
-                    $.each(rawData.data, function (i, item) {
-                        var sekNama = item.nama
-                        var sekID = item.sekolah_id
-                        $.each(item.kompetensi, function (i, item) {
-                            var sekkompID = "1-" + sekID + "-" + item.k_kompetensi
-                            $("#daftarSekolah").append("<option value=\"" + sekkompID + "\">" + sekNama + " - " + item.kompetensi + "</option>")
-                            dataSekolah[sekkompID] = {}
-                            dataSekolah[sekkompID].sekNama = sekNama
-                            dataSekolah[sekkompID].sekKomp = item.kompetensi
-                            dataSekolah[sekkompID].sekPagu = item.pagu
+		/*
+		Connection test. Connects to other sites to avoid rate-limiting.
+		---
+		Test koneksi. Situs lain yang dihubungkan untuk menghindari pembatasan
+		*/
+		
+		function initialize() {
+			$.get("https://cors.io/?https://reqres.in/api/users?page=1", function() {
+				initialize2("https://cors.io?")
+			})
+				.fail(function() {
+				$.get("https://api.codetabs.com/cors-proxy/https://reqres.in/api/users?page=2", function() {
+					initialize2("https://api.codetabs.com/cors-proxy/")
+				})
+					.fail(function() {
+					$.get("https://cors.io/?http://www.mocky.io/v2/5b321e073400004f003fd284", function() {
+						initialize2("https://cors.io?")
+					})
+						.fail(function() {
+						$.get("https://api.codetabs.com/cors-proxy/http://www.mocky.io/v2/5b321e073400004f003fd284", function() {
+							initialize2("https://api.codetabs.com/cors-proxy/")
+						})
+							.fail(function() {
+								$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p>")
+							})
+						})
+					})
+				})
+		}
+		
+		function initialize2(data) {
+			cors = data
+			dataSekolah1();
+		}
+		
+		function initializePost() {
+			nowID = window.location.hash.substring(1)
+			$("#daftarSekolah").val(nowID)
+			loadHasil()
+		}
+		
+		function pad(u) {
+			var n = Number(u)
+			return (n < 10) ? '0' + u : u;
+		}
+
+		/*
+		This script used to obtain the school list.
+		---
+		Skrip ini digunakan untuk mendapatkan daftar sekolah.
+		*/
+		
+		function dataSekolah1() {
+			var rawData = cors + "https://ppdb.jakarta.go.id/pagu/3-sma-reguler.json";
+			$.getJSON(rawData)
+				.done(function (rawData) {
+					$.each(rawData.data, function (i, item) {
+						var sekNama = item.nama
+						var sekID = item.sekolah_id
+						$.each(item.kompetensi, function (i, item) {
+							var sekkompID = "3-" + sekID + "-" + item.k_kompetensi
+							$("#daftarSekolah").append("<option value=\"" + sekkompID + "\">" + sekNama + " - " + item.kompetensi + "</option>")
+							dataSekolah[sekkompID] = {}
+							dataSekolah[sekkompID].sekNama = sekNama
+							dataSekolah[sekkompID].sekKomp = item.kompetensi
+							dataSekolah[sekkompID].sekPagu = item.pagu
 							dataSekolah[sekkompID].sekID = sekID
 							dataSekolah[sekkompID].sekkID = item.k_kompetensi
-                        });
-                    });
-                    $("#daftarSekolah")[0].disabled = false
-                    $("#daftarSekolahButton")[0].disabled = false
-                });
-        }
-
-        function dataStats(ID) {
-			if (typeof ID === "string") {
-				$("#statNama").html(dataSekolah[ID].sekNama)
-				$("#statKomp").html(dataSekolah[ID].sekKomp)
-				$("#statPagu").html(dataSekolah[ID].sekPagu)
-				$("#statSekLengkap").click(function(){window.open('https://ppdb.jakarta.go.id/#/030003/statistik/detail/' + dataSekolah[ID].sekID)})
-				$("#statHasilLengkap").click(function(){window.open('https://ppdb.jakarta.go.id/#/030003/hasil/seleksi/' + dataSekolah[ID].sekID + '/' + dataSekolah[ID].sekkID + '/1/simple')})
-			} else {
-				$("#statNama").html("")
-				$("#statKomp").html("")
-				$("#statPagu").html("")
-				$("#statSekLengkap").click("")
-				$("#statHasilLengkap").click("")
-			}
-        }
-
-        function dataSeleksi(ID) {
-			$("#mainNilai")[0].innerHTML = ""/*
-			if (typeof ID === "string") {
-				$("#daftarSekolah")[0].disabled = true
-				$("#daftarSekolahButton")[0].disabled = true
-				$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
-					.done(function (rawData) {
-						$("#statPeminat").html(rawData.data.length + " (" + Math.round((rawData.data.length/dataSekolah[ID].sekPagu)*100) + "%)")
-						$.each(rawData.data, function (i, item) {
-							$("#mainNilai").append("<tr></tr>")
-							$("tr").last().append("<td>" + item[0] + "</td>")
-							$("tr").last().append("<td>" + item[1] + "</td>")
-							$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/020003/detail/" + item[1] + "')\">" + item[2] + "</a></td>")
-							$("tr").last().append("<td>" + item[3] + "</td>")
 						});
-						$("#daftarSekolah")[0].disabled = false
-						$("#daftarSekolahButton")[0].disabled = false
 					});
-			}*/
-        }
+					$("#daftarSekolah")[0].disabled = false
+				});
+		}
 
-        $("#daftarSekolah")[0].onchange = function () {
-            dataSeleksi(this.value);
-            dataStats(this.value)
-        }
-
-        $("#daftarSekolahButton")[0].onclick = function () {
-            var ID = $("#daftarSekolah")[0].value
-            dataSeleksi(ID);
-        }
+		/*
+		This script used to get stats.
+		---
+		Skrip ini digunakan untuk mendapatkan statistik.
+		*/
 		
-        $("#daftarSekolah")[0].disabled = true
-        $("#daftarSekolahButton")[0].disabled = true
-        dataSekolah1();
-    </script>
+		function dataStats(ID) {
+			window.location.hash = ID
+			$("#statNama").html(dataSekolah[ID].sekNama)
+			$("#statKomp").html(dataSekolah[ID].sekKomp)
+			$("#statPagu").html("0/"+ dataSekolah[ID].sekPagu)
+			$("#statSekLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/030003/statistik/detail/" + dataSekolah[ID].sekID + "')")
+			$("#statHasilLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/030003/hasil/seleksi/" + dataSekolah[ID].sekID + "/" + dataSekolah[ID].sekkID + "/1/simple')")
+			$("#statLastUpd").html("")
+			$("#statAvg").html("")
+			$("#statMax").html("")
+			$("#statMin").html("")
+		}
 
+		/*
+		This script used to obtain the selection list.
+		---
+		Skrip ini digunakan untuk mendapatkan daftar seleksi.
+		*/
+		
+		function dataSeleksi(ID) {
+			$("#daftarSekolah")[0].disabled = true
+			$("#daftarSekolahButton")[0].disabled = true
+			$("#autoUpdate")[0].disabled = true
+			$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
+				.done(function (rawData) {
+					$("#mainNilai")[0].innerHTML = ""
+					$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].sekPagu + " (" + Math.round((rawData.data.length/dataSekolah[ID].sekPagu)*100) + "%)")
+					$.each(rawData.data, function (i, item) {
+						$("#mainNilai").append("<tr></tr>")
+						$("tr").last().append("<td><strong>" + item[0] + "</strong></td>")
+						$("tr").last().append("<td>" + item[1] + "</td>")
+						$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/020003/detail/" + item[1] + "')\">" + item[2] + "</a></td>")
+						$("tr").last().append("<td>" + item[3] + "</td>")
+						$("tr").last().append("<td>" + (Number(item[5])+Number(item[6])+Number(item[7])+Number(item[8])).toFixed(2) + "</td>")
+					});
+					$("#daftarSekolah")[0].disabled = false
+					$("#daftarSekolahButton")[0].disabled = false
+					$("#autoUpdate")[0].disabled = false
+					checkAvg()
+					var Now = new Date(Date.now())
+					$("#statLastUpd").html(pad(Now.getDate()) + "/" + pad(Now.getMonth()) + "/" + Now.getFullYear() + " " + pad(Now.getHours()) + ":" + pad(Now.getMinutes()) + ":" + pad(Now.getSeconds()))
+				});
+		}
+
+		/*
+		This script used to calculate the average, maximum, and minimum of the scores.
+		---
+		Skrip ini digunakan untuk menghitung nilai rata-rata, nilai tertinggi, dan nillai terendah.
+		*/
+		
+		function checkAvg() {
+			var Avg = 0
+			var Max = 0
+			var Min = 0
+			$.each($("#mainNilai")[0].children, function (i, item) {
+				Avg = Avg + Number(item.lastChild.innerHTML)
+			})
+			Avg = Avg / Number($("#mainNilai")[0].childElementCount)
+			Max = Number($("#mainNilai")[0].firstChild.lastChild.innerHTML)
+			Min = Number($("#mainNilai")[0].lastChild.lastChild.innerHTML)
+			$("#statAvg").html((Avg/4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
+			$("#statMax").html((Max/4).toFixed(2) + " (" + Max.toFixed(2) + ")")
+			$("#statMin").html((Min/4).toFixed(2) + " (" + Min.toFixed(2) + ")")
+		}
+		
+		/*
+		This script used to load the results.
+		---
+		Skrip ini digunakan untuk menampilkan hasil.
+		*/
+		
+		function loadHasil() {
+			if (nowID.length > 0) {
+				dataSeleksi(nowID)
+				dataStats(nowID)
+			}
+			return true
+		}
+		
+		$("#daftarSekolah")[0].onchange = function () {
+			nowID = this.value
+			if (nowID.length > 0) {
+				loadHasil()
+			} else {
+				$("#daftarSekolahButton")[0].disabled = true
+				$("#autoUpdate")[0].disabled = true
+			}
+		}
+
+		$("#daftarSekolahButton")[0].onclick = function () {
+			loadHasil()
+		}
+		
+		
+		$("#autoUpdate")[0].onclick = function () {
+			if (this.checked) {
+				var autoUpd = setInterval(loadHasil, 5000)
+			} else {
+				clearInterval(autoUpd);
+			}
+		}
+				
+		/*
+		Final scripts before initialization.
+		---
+		Skrip-skrip terakhir sebelum pelunjur
+		*/
+		
+		$("#autoUpdate")[0].checked = false
+		$("#daftarSekolah")[0].disabled = true
+		$("#daftarSekolahButton")[0].disabled = true
+		$("#autoUpdate")[0].disabled = true
+		initialize();
+	</script>
+	<script>
+		var time = moment.tz("2018-07-09 08:00", "Asia/Jakarta")
+		
+		var $clock = $('#clock');
+		$clock.countdown(time.toDate(), function(event) {
+			$(this).html(event.strftime('%D:%H:%M:%S'));
+		});
+	</script>
 </body>
-
 </html>
