@@ -55,7 +55,7 @@
 					</div>
 				</form>
 				<br>
-				<h4>Sisa Waktu Pendaftaran</h5>
+				<h4>Sisa Waktu Pendaftaran <small>28 Juni 2018. 14:00 WIB</small></h5>
 				<h3 style="margin-top:0" id="clock"></h5>
 				<br>
 				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
@@ -317,7 +317,7 @@
 		initialize();
 	</script>
 	<script>
-		var time = moment.tz("2018-06-27 14:00", "Asia/Jakarta")
+		var time = moment.tz("2018-06-28 14:00", "Asia/Jakarta")
 		
 		var $clock = $('#clock');
 		$clock.countdown(time.toDate(), function(event) {
