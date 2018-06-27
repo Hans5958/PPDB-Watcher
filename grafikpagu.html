@@ -8,7 +8,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="require.js"></script>
-	<title>PPDB Watcher - Grafik Pagu (Bangku)</title>
+	<title>PPDB Watcher - Grafik Pagu (Kursi/Bangku)</title>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49890594-3"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -25,16 +25,16 @@
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="index">PPDB Watcher</a>
+				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
 			</div>
 			<ul class="nav navbar-nav">
-				<li><a href="#">Tahap 1 Lokal</a></li>
-				<li><a href="tahap2">Tahap 2 Umum</a></li>
-				<li><a href="tahap3">Tahap 3 Umum</a></li>
+				<li><a href="tahap1.html">Tahap 1 Lokal</a></li>
+				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
+				<li><a href="tahap3.html">Tahap 3 Umum</a></li>
 				<li><a class="dropdown-toggle active" data-toggle="dropdown" href="#">Grafik<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="grafiknilai">Nilai</a></li>
-						<li><a href="grafikpagu">Pagu</a></li>
+						<li><a href="grafiknilai.html">Nilai</a></li>
+						<li><a href="grafikpagu.html">Pagu (Kursi/Bangku)</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -48,17 +48,17 @@
 		<canvas id="IPS1"></canvas>
 		<h2 class="text-center">Tahap 1 Lokal - Bahasa</h2>
 		<canvas id="BAHASA1"></canvas>
-		<h2 class="text-center">Tahap 2 Lokal - MIPA</h2>
+		<h2 class="text-center">Tahap 2 Umum - MIPA</h2>
 		<canvas id="MIPA2"></canvas>
-		<h2 class="text-center">Tahap 2 Lokal - IPS</h2>
+		<h2 class="text-center">Tahap 2 Umum - IPS</h2>
 		<canvas id="IPS2"></canvas>
-		<h2 class="text-center">Tahap 2 Lokal - Bahasa</h2>
+		<h2 class="text-center">Tahap 2 Umum - Bahasa</h2>
 		<canvas id="BAHASA2"></canvas>
-		<h2 class="text-center">Tahap 3 Lokal - MIPA</h2>
+		<h2 class="text-center">Tahap 3 Umum - MIPA</h2>
 		<canvas id="MIPA3"></canvas>
-		<h2 class="text-center">Tahap 3 Lokal - IPS</h2>
+		<h2 class="text-center">Tahap 3 Umum - IPS</h2>
 		<canvas id="IPS3"></canvas>
-		<h2 class="text-center">Tahap 3 Lokal - Bahasa</h2>
+		<h2 class="text-center">Tahap 3 Umum - Bahasa</h2>
 		<canvas id="BAHASA3"></canvas>
 	</div>
 </body>
@@ -157,7 +157,7 @@
 				renderChart("BAHASA", 3);
             });
     }
-	
+
 	function renderChart(x, y) {
 			var chartLabel = []
 			var chartPagu = []
@@ -188,8 +188,8 @@
 				}
 			});
 	}
-	
-	
+
+
 	initialize();
 </script>
 

@@ -25,16 +25,16 @@
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="index">PPDB Watcher</a>
+				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
 			</div>
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="#">Tahap 1 Lokal</a></li>
-				<li><a href="tahap2">Tahap 2 Umum</a></li>
-				<li><a href="tahap3">Tahap 3 Umum</a></li>
+				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
+				<li><a href="tahap3.html">Tahap 3 Umum</a></li>
 				<li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Grafik<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="grafiknilai">Nilai</a></li>
-						<li><a href="grafikpagu">Pagu</a></li>
+						<li><a href="grafiknilai.html">Nilai</a></li>
+						<li><a href="grafikpagu.html">Pagu (Kursi/Bangku)</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -154,7 +154,7 @@
 										initialize2("https://api.codetabs.com/cors-proxy/")
 									})
 									.fail(function () {
-										$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p>")
+										$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"><button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form>")
 									})
 							})
 					})
@@ -241,7 +241,7 @@
 				postLoad()
 			});
 	}
-	
+
 	function postLoad() {
 		var Avg = 0
 		var Max = 0
@@ -255,7 +255,7 @@
 		$("#statAvg").html((Avg / 4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
 		$("#statMax").html((Max / 4).toFixed(2) + " (" + Max.toFixed(2) + ")")
 		$("#statMin").html((Min / 4).toFixed(2) + " (" + Min.toFixed(2) + ")")
-		
+
 		var chartLabel = []
 		var chartNilai = []
 		$.each($("#mainNilai")[0].children, function (a, b) {
@@ -292,6 +292,13 @@
 			}
 		});
 	}
+
+	$("#autoUpdate")[0].checked = false
+	$("#daftarSekolah")[0].disabled = true
+	$("#daftarSekolahButton")[0].disabled = true
+	$("#autoUpdate")[0].disabled = true
+	initialize();
+
 	function loadHasil() {
 		if (nowID.length > 0) {
 			dataSeleksi(nowID)
@@ -299,14 +306,6 @@
 		}
 	}
 
-	$("#autoUpdate")[0].checked = false
-	$("#daftarSekolah")[0].disabled = true
-	$("#daftarSekolahButton")[0].disabled = true
-	$("#autoUpdate")[0].disabled = true
-	initialize();
-</script>
-
-<script>
 	$("#daftarSekolah")[0].onchange = function () {
 		nowID = this.value
 		if (nowID.length > 0) {
@@ -316,7 +315,7 @@
 			$("#autoUpdate")[0].disabled = true
 		}
 	}
-	
+
 	$("#daftarSekolahButton")[0].onclick = function () {
 		loadHasil()
 	}
@@ -333,10 +332,7 @@
 		$('#copy-input')[0].select()
 		document.execCommand("copy")
 	}
-	
-</script>
 
-<script>
 	var time = moment.tz("2018-06-28 14:00", "Asia/Jakarta")
 	var $clock = $('#clock');
 	$clock.countdown(time.toDate(), function (event) {
