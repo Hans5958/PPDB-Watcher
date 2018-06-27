@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="require.js"></script>
+	<title>PPDB Watcher - Grafik Pagu (Bangku)</title>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49890594-3"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'UA-49890594-3');
+	</script>
+</head>
+
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li><a href="#">Tahap 1 Lokal</a></li>
+				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
+				<li><a href="tahap3.html">Tahap 3 Umum</a></li>
+				<li><a class="dropdown-toggle active" data-toggle="dropdown" href="#">Grafik<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Nilai</a></li>
+						<li><a href="#">Pagu</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<h1 class="text-center">Grafik Pagu (Bangku)</h1>
+		<h2 class="text-center">Tahap 1 Lokal - MIPA</h2>
+		<canvas id="MIPA1"></canvas>
+		<h2 class="text-center">Tahap 1 Lokal - IPS</h2>
+		<canvas id="IPS1"></canvas>
+		<h2 class="text-center">Tahap 1 Lokal - Bahasa</h2>
+		<canvas id="BAHASA1"></canvas>
+		<h2 class="text-center">Tahap 2 Lokal - MIPA</h2>
+		<canvas id="MIPA2"></canvas>
+		<h2 class="text-center">Tahap 2 Lokal - IPS</h2>
+		<canvas id="IPS2"></canvas>
+		<h2 class="text-center">Tahap 2 Lokal - Bahasa</h2>
+		<canvas id="BAHASA2"></canvas>
+		<h2 class="text-center">Tahap 3 Lokal - MIPA</h2>
+		<canvas id="MIPA3"></canvas>
+		<h2 class="text-center">Tahap 3 Lokal - IPS</h2>
+		<canvas id="IPS3"></canvas>
+		<h2 class="text-center">Tahap 3 Lokal - Bahasa</h2>
+		<canvas id="BAHASA3"></canvas>
+	</div>
+</body>
+
+<script>
+	var cors = ""
+	var rekap = {
+		MIPA: {
+			1: [],
+			2: [],
+			3: []
+		},
+		IPS: {
+			1: [],
+			2: [],
+			3: []
+		},
+		BAHASA: {
+			1: [],
+			2: [],
+			3: []
+		}
+	}
+	rekap.IPA = rekap.MIPA
+
+    function initialize() {
+        $.get("https://cors.io/?https://reqres.in/api/users?page=1", function () {
+                initialize2("https://cors.io?")
+            })
+            .fail(function () {
+                $.get("https://api.codetabs.com/cors-proxy/https://reqres.in/api/users?page=2", function () {
+                        initialize2("https://api.codetabs.com/cors-proxy/")
+                    })
+                    .fail(function () {
+                        $.get("https://cors.io/?http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
+                                initialize2("https://cors.io?")
+                            })
+                            .fail(function () {
+                                $.get("https://api.codetabs.com/cors-proxy/http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
+                                        initialize2("https://api.codetabs.com/cors-proxy/")
+                                    })
+                                    .fail(function () {
+                                        $(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p>")
+                                    })
+                            })
+                    })
+            })
+    }
+
+    function initialize2(data) {
+        cors = data
+        dataSekolah2();
+    }
+
+	function dataSekolah2() {
+        $.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/1-sma-reguler.json")
+            .done(function (r) {
+				$.each(r.data, function (a, b) {
+					$.each(b.kompetensi, function (a, c) {
+						rekap[c.kompetensi]['1'].push({
+							"nama": b.nama,
+							"pagu": c.pagu
+						})
+					})
+				})
+                renderChart("MIPA", 1);
+				renderChart("IPS", 1);
+				renderChart("BAHASA", 1);
+            });
+		$.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/2-sma-reguler.json")
+            .done(function (r) {
+				$.each(r.data, function (a, b) {
+					$.each(b.kompetensi, function (a, c) {
+						rekap[c.kompetensi]['2'].push({
+							"nama": b.nama,
+							"pagu": c.pagu
+						})
+					})
+				})
+                renderChart("MIPA", 2);
+				renderChart("IPS", 2);
+				renderChart("BAHASA", 2);
+            });
+		$.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/3-sma-reguler.json")
+            .done(function (r) {
+				$.each(r.data, function (a, b) {
+					$.each(b.kompetensi, function (a, c) {
+						rekap[c.kompetensi]['3'].push({
+							"nama": b.nama,
+							"pagu": c.pagu
+						})
+					})
+				})
+                renderChart("MIPA", 3);
+				renderChart("IPS", 3);
+				renderChart("BAHASA", 3);
+            });
+    }
+	
+	function renderChart(x, y) {
+			var chartLabel = []
+			var chartPagu = []
+			$.each(rekap[x][y], function (i, item) {
+				chartLabel.push(item.nama)
+				chartPagu.push(item.pagu)
+			})
+			var ctx = document.getElementById(x + y);
+			var lineChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: chartLabel,
+					datasets: [{
+						label: "Pagu",
+						data: chartPagu,
+						backgroundColor: 'rgba(0, 0, 0, 0)',
+						borderColor: 'rgba(0, 181, 255, 1)',
+						borderWidth: 1
+					}]
+				},
+				options: {
+					tooltips: {
+						mode: 'index'
+					},
+					legend: {
+						display: false
+					},
+				}
+			});
+	}
+	
+	
+	initialize();
+</script>
+
+</html>

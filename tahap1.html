@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html lang="en">
 
 <head>
@@ -28,9 +28,15 @@
 				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
 			</div>
 			<ul class="nav navbar-nav">
-				<li class="active" ><a href="#">Tahap 1 Lokal</a></li>
+				<li class="active"><a href="#">Tahap 1 Lokal</a></li>
 				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
 				<li><a href="tahap3.html">Tahap 3 Umum</a></li>
+				<li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Grafik<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Nilai</a></li>
+						<li><a href="#">Pagu</a></li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 	</nav>
@@ -50,17 +56,18 @@
 					<button type="button" class="btn btn-default btn-sm" id="daftarSekolahButton">
 						<span class="glyphicon glyphicon-refresh"></span> Refresh
 					</button>
-					<div class="checkbox hidden">
+					<div class="checkbox">
 						<label><input id="autoUpdate" type="checkbox" value="" checked="false"> <span class="glyphicon glyphicon-refresh"></span> Auto-update</label>
 					</div>
 				</form>
 				<br>
-				<h4>Sisa Waktu Pendaftaran <small>28 Juni 2018. 14:00 WIB</small></h5>
-				<h3 style="margin-top:0" id="clock"></h5>
-				<br>
-				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
-				<br>
-				<br>
+				<h4>Sisa Waktu Pendaftaran <small>28 Juni 2018 14:00 WIB</small></h4>
+					<h3 style="margin-top:0" id="clock">
+						</h5>
+						<br>
+						<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
+						<br>
+						<br>
 			</div>
 			<div class="col-xs-12 col-sm-6">
 				<h4>Keterangan</h4>
@@ -96,233 +103,245 @@
 						</tr>
 					</tbody>
 				</table>
-				<a href="#" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
-				<a href="#" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
-			</div>
+				<form class="form-inline">
+					<a href="#" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
+					<a href="#" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
+					<div class="input-group pull-right">
+						<input type="text" class="form-control" value="" placeholder="Pranala (link)" id="copy-input">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="copy">Salin</button>
+						</span>
+					</div>
+				</form>
 		</div>
-		<p>
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>No. Urut</th>
-						<th>No. Daftar</th>
-						<th>Nama</th>
-						<th>NA</th>
-						<th>NUN</th>
-					</tr>
-				</thead>
-				<tbody id="mainNilai">
-				</tbody>
-			</table>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>No. Urut</th>
+					<th>No. Daftar</th>
+					<th>Nama</th>
+					<th>NA</th>
+					<th>NUN</th>
+				</tr>
+			</thead>
+			<tbody id="mainNilai">
+			</tbody>
+		</table>
+		<canvas height="100px" id="chart"></canvas>
+		<br>
 	</div>
-	</div>
+</body>
 
-	<script>
-		var nowID = ""
-		var dataSekolah = {}
+<script>
+	var nowID = ""
+	var dataSekolah = {}
+	var tahapID = "1"
 
-		/*
-		Connection test. Connects to other sites to avoid rate-limiting.
-		---
-		Test koneksi. Situs lain yang dihubungkan untuk menghindari pembatasan
-		*/
-		
-		function initialize() {
-			$.get("https://cors.io/?https://reqres.in/api/users?page=1", function() {
+	function initialize() {
+		$.get("https://cors.io/?https://reqres.in/api/users?page=1", function () {
 				initialize2("https://cors.io?")
 			})
-				.fail(function() {
-				$.get("https://api.codetabs.com/cors-proxy/https://reqres.in/api/users?page=2", function() {
-					initialize2("https://api.codetabs.com/cors-proxy/")
-				})
-					.fail(function() {
-					$.get("https://cors.io/?http://www.mocky.io/v2/5b321e073400004f003fd284", function() {
-						initialize2("https://cors.io?")
+			.fail(function () {
+				$.get("https://api.codetabs.com/cors-proxy/https://reqres.in/api/users?page=2", function () {
+						initialize2("https://api.codetabs.com/cors-proxy/")
 					})
-						.fail(function() {
-						$.get("https://api.codetabs.com/cors-proxy/http://www.mocky.io/v2/5b321e073400004f003fd284", function() {
-							initialize2("https://api.codetabs.com/cors-proxy/")
-						})
-							.fail(function() {
-								$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p>")
+					.fail(function () {
+						$.get("https://cors.io/?http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
+								initialize2("https://cors.io?")
 							})
-						})
+							.fail(function () {
+								$.get("https://api.codetabs.com/cors-proxy/http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
+										initialize2("https://api.codetabs.com/cors-proxy/")
+									})
+									.fail(function () {
+										$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p>")
+									})
+							})
 					})
-				})
-		}
-		
-		function initialize2(data) {
-			cors = data
-			dataSekolah1();
-		}
-		
-		function initializePost() {
-			nowID = window.location.hash.substring(1)
-			$("#daftarSekolah").val(nowID)
-			loadHasil()
-		}
-		
-		function pad(u) {
-			var n = Number(u)
-			return (n < 10) ? '0' + u : u;
-		}
-		
-		/*
-		This script used to obtain the school list.
-		---
-		Skrip ini digunakan untuk mendapatkan daftar sekolah.
-		*/
-		
-		function dataSekolah1() {
-			var rawData = cors + "https://ppdb.jakarta.go.id/pagu/1-sma-reguler.json";
-			$.getJSON(rawData)
-				.done(function (rawData) {
-					$.each(rawData.data, function (i, item) {
-						var sekNama = item.nama
-						var sekID = item.sekolah_id
-						$.each(item.kompetensi, function (i, item) {
-							var sekkompID = "1-" + sekID + "-" + item.k_kompetensi
-							$("#daftarSekolah").append("<option value=\"" + sekkompID + "\">" + sekNama + " - " + item.kompetensi + "</option>")
-							dataSekolah[sekkompID] = {}
-							dataSekolah[sekkompID].sekNama = sekNama
-							dataSekolah[sekkompID].sekKomp = item.kompetensi
-							dataSekolah[sekkompID].sekPagu = item.pagu
-							dataSekolah[sekkompID].sekID = sekID
-							dataSekolah[sekkompID].sekkID = item.k_kompetensi
-						});
-					});
-					$("#daftarSekolah")[0].disabled = false
-					initializePost()
-				});
-		}
-
-		/*
-		This script used to get stats.
-		---
-		Skrip ini digunakan untuk mendapatkan statistik.
-		*/
-		
-		function dataStats(ID) {
-			window.location.hash = ID
-			$("#statNama").html(dataSekolah[ID].sekNama)
-			$("#statKomp").html(dataSekolah[ID].sekKomp)
-			$("#statPagu").html("0/"+ dataSekolah[ID].sekPagu)
-			$("#statSekLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/030001/statistik/detail/" + dataSekolah[ID].sekID + "')")
-			$("#statHasilLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/030001/hasil/seleksi/" + dataSekolah[ID].sekID + "/" + dataSekolah[ID].sekkID + "/1/simple')")
-			$("#statLastUpd").html("")
-			$("#statAvg").html("")
-			$("#statMax").html("")
-			$("#statMin").html("")
-		}
-
-		/*
-		This script used to obtain the selection list.
-		---
-		Skrip ini digunakan untuk mendapatkan daftar seleksi.
-		*/
-		
-		function dataSeleksi(ID) {
-			$("#daftarSekolah")[0].disabled = true
-			$("#daftarSekolahButton")[0].disabled = true
-			$("#autoUpdate")[0].disabled = true
-			$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
-				.done(function (rawData) {
-					$("#mainNilai")[0].innerHTML = ""
-					$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].sekPagu + " (" + Math.round((rawData.data.length/dataSekolah[ID].sekPagu)*100) + "%)")
-					$.each(rawData.data, function (i, item) {
-						$("#mainNilai").append("<tr></tr>")
-						$("tr").last().append("<td><strong>" + item[0] + "</strong></td>")
-						$("tr").last().append("<td>" + item[1] + "</td>")
-						$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/020001/detail/" + item[1] + "')\">" + item[2] + "</a></td>")
-						$("tr").last().append("<td>" + item[3] + "</td>")
-						$("tr").last().append("<td>" + (Number(item[5])+Number(item[6])+Number(item[7])+Number(item[8])).toFixed(2) + "</td>")
-					});
-					$("#daftarSekolah")[0].disabled = false
-					$("#daftarSekolahButton")[0].disabled = false
-					$("#autoUpdate")[0].disabled = false
-					checkAvg()
-					var Now = new Date(Date.now())
-					$("#statLastUpd").html(pad(Now.getDate()) + "/" + pad(Now.getMonth()) + "/" + Now.getFullYear() + " " + pad(Now.getHours()) + ":" + pad(Now.getMinutes()) + ":" + pad(Now.getSeconds()))
-				});
-		}
-
-		/*
-		This script used to calculate the average, maximum, and minimum of the scores.
-		---
-		Skrip ini digunakan untuk menghitung nilai rata-rata, nilai tertinggi, dan nillai terendah.
-		*/
-		
-		function checkAvg() {
-			var Avg = 0
-			var Max = 0
-			var Min = 0
-			$.each($("#mainNilai")[0].children, function (i, item) {
-				Avg = Avg + Number(item.lastChild.innerHTML)
 			})
-			Avg = Avg / Number($("#mainNilai")[0].childElementCount)
-			Max = Number($("#mainNilai")[0].firstChild.lastChild.innerHTML)
-			Min = Number($("#mainNilai")[0].lastChild.lastChild.innerHTML)
-			$("#statAvg").html((Avg/4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
-			$("#statMax").html((Max/4).toFixed(2) + " (" + Max.toFixed(2) + ")")
-			$("#statMin").html((Min/4).toFixed(2) + " (" + Min.toFixed(2) + ")")
-		}
-		
-		/*
-		This script used to load the results.
-		---
-		Skrip ini digunakan untuk menampilkan hasil.
-		*/
-		
-		function loadHasil() {
-			if (nowID.length > 0) {
-				dataSeleksi(nowID)
-				dataStats(nowID)
-			}
-		}
-		
-		$("#daftarSekolah")[0].onchange = function () {
-			nowID = this.value
-			if (nowID.length > 0) {
-				loadHasil()
-			} else {
-				$("#daftarSekolahButton")[0].disabled = true
-				$("#autoUpdate")[0].disabled = true
-			}
-		}
+	}
 
-		$("#daftarSekolahButton")[0].onclick = function () {
+	function initialize2(data) {
+		cors = data
+		dataSekolah1();
+	}
+
+	function initializePost() {
+		nowID = window.location.hash.substring(1)
+		$("#daftarSekolah").val(nowID)
+		if ($("#daftarSekolah option[value=" + nowID + "]").length > 0) {
 			loadHasil()
+		} else {
+			nowID = ""
+			$("#daftarSekolah").val("")
 		}
-		
-		
-		$("#autoUpdate")[0].onclick = function () {
-			if (this.checked) {
-				var autoUpd = setInterval(loadHasil, 5000)
-			} else {
-				clearInterval(autoUpd);
-			}
-		}
-		
-		
-		/*
-		Final scripts before initialization.
-		---
-		Skrip-skrip terakhir sebelum pelunjur
-		*/
-		
-		$("#autoUpdate")[0].checked = false
+	}
+
+	function pad(u) {
+		var n = Number(u)
+		return (n < 10) ? '0' + u : u;
+	}
+
+	function dataSekolah1() {
+		$.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/" + tahapID + "-sma-reguler.json")
+			.done(function (r) {
+				$.each(r.data, function (a, b) {
+					$.each(b.kompetensi, function (a, c) {
+						var MainID = tahapID + "-" + b.sekolah_id + "-" + c.k_kompetensi
+						$("#daftarSekolah").append("<option value=\"" + MainID + "\">" + b.nama + " - " + c.kompetensi + "</option>")
+						dataSekolah[MainID] = {
+							"Nama": b.nama,
+							"Komp": c.kompetensi,
+							"Pagu": c.pagu,
+							"SID": b.sekolah_id,
+							"KID": c.k_kompetensi
+						}
+					});
+				});
+				$("#daftarSekolah")[0].disabled = false
+				initializePost()
+			});
+	}
+
+	function dataStats(ID) {
+		window.location.hash = ID
+		$("#statNama").html(dataSekolah[ID].Nama)
+		$("#statKomp").html(dataSekolah[ID].Komp)
+		$("#statPagu").html("0/" + dataSekolah[ID].Pagu)
+		$("#statSekLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/statistik/detail/" + dataSekolah[ID].SID + "')")
+		$("#statHasilLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil/seleksi/" + dataSekolah[ID].SID + "/" + dataSekolah[ID].KID + "/1/simple')")
+		$("#statLastUpd").html("")
+		$("#statAvg").html("")
+		$("#statMax").html("")
+		$("#statMin").html("")
+		$("#copy-input").val(document.location.href)
+	}
+
+	function dataSeleksi(ID) {
 		$("#daftarSekolah")[0].disabled = true
 		$("#daftarSekolahButton")[0].disabled = true
 		$("#autoUpdate")[0].disabled = true
-		initialize();
-	</script>
-	<script>
-		var time = moment.tz("2018-06-28 14:00", "Asia/Jakarta")
+		$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
+			.done(function (rawData) {
+				$("#mainNilai")[0].innerHTML = ""
+				$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].Pagu + " (" + Math.round((rawData.data.length / dataSekolah[ID].Pagu) * 100) + "%)")
+				$.each(rawData.data, function (a, b) {
+					$("#mainNilai").append("<tr></tr>")
+					$("tr").last().append("<td><strong>" + b[0] + "</strong></td>")
+					$("tr").last().append("<td>" + b[1] + "</td>")
+					$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/02000" + tahapID + "/detail/" + b[1] + "')\">" + b[2] + "</a></td>")
+					$("tr").last().append("<td>" + b[3] + "</td>")
+					$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
+				});
+				$("#daftarSekolah")[0].disabled = false
+				$("#daftarSekolahButton")[0].disabled = false
+				$("#autoUpdate")[0].disabled = false
+				var Now = new Date(Date.now())
+				$("#statLastUpd").html(pad(Now.getDate()) + "/" + pad(Now.getMonth()) + "/" + Now.getFullYear() + " " + pad(Now.getHours()) + ":" + pad(Now.getMinutes()) + ":" + pad(Now.getSeconds()))
+				postLoad()
+			});
+	}
+	
+	function postLoad() {
+		var Avg = 0
+		var Max = 0
+		var Min = 0
+		$.each($("#mainNilai")[0].children, function (a, b) {
+			Avg = Avg + Number(b.lastChild.innerHTML)
+		})
+		Avg = Avg / Number($("#mainNilai")[0].childElementCount)
+		Max = Number($("#mainNilai")[0].firstChild.lastChild.innerHTML)
+		Min = Number($("#mainNilai")[0].lastChild.lastChild.innerHTML)
+		$("#statAvg").html((Avg / 4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
+		$("#statMax").html((Max / 4).toFixed(2) + " (" + Max.toFixed(2) + ")")
+		$("#statMin").html((Min / 4).toFixed(2) + " (" + Min.toFixed(2) + ")")
 		
-		var $clock = $('#clock');
-		$clock.countdown(time.toDate(), function(event) {
-			$(this).html(event.strftime('%D:%H:%M:%S'));
+		var chartLabel = []
+		var chartNilai = []
+		$.each($("#mainNilai")[0].children, function (a, b) {
+			chartLabel.push(b.children[2].lastChild.innerHTML)
+			chartNilai.push(b.children[3].innerHTML)
+		})
+		if (typeof lineChart !== "undefined") {
+			lineChart.destroy();
+		}
+		var ctx = $("#chart");
+		lineChart = new Chart($("#chart"), {
+			type: 'line',
+			data: {
+				labels: chartLabel,
+				datasets: [{
+					data: chartNilai,
+					backgroundColor: 'rgba(0, 0, 0, 0)',
+					borderColor: 'rgba(0, 181, 255, 1)',
+					borderWidth: 1,
+					tooltip: false
+				}]
+			},
+			options:{
+				legend: {
+					display: false
+				},
+				scales: {
+					xAxes: [{
+						ticks: {
+							display: false
+						}
+					}]
+				}
+			}
 		});
-	</script>
-</body>
+	}
+	function loadHasil() {
+		if (nowID.length > 0) {
+			dataSeleksi(nowID)
+			dataStats(nowID)
+		}
+	}
+
+	$("#autoUpdate")[0].checked = false
+	$("#daftarSekolah")[0].disabled = true
+	$("#daftarSekolahButton")[0].disabled = true
+	$("#autoUpdate")[0].disabled = true
+	initialize();
+</script>
+
+<script>
+	$("#daftarSekolah")[0].onchange = function () {
+		nowID = this.value
+		if (nowID.length > 0) {
+			loadHasil()
+		} else {
+			$("#daftarSekolahButton")[0].disabled = true
+			$("#autoUpdate")[0].disabled = true
+		}
+	}
+	
+	$("#daftarSekolahButton")[0].onclick = function () {
+		loadHasil()
+	}
+
+	$("#autoUpdate")[0].onclick = function () {
+		if (this.checked) {
+			var autoUpd = setInterval(loadHasil, 5000)
+		} else {
+			document.location.reload(true)
+		}
+	}
+
+	$("#copy-button")[0].onclick = function () {
+		$('#copy-input')[0].select()
+		document.execCommand("copy")
+	}
+	
+</script>
+
+<script>
+	var time = moment.tz("2018-06-28 14:00", "Asia/Jakarta")
+	var $clock = $('#clock');
+	$clock.countdown(time.toDate(), function (event) {
+		$(this).html(event.strftime('%D:%H:%M:%S'));
+	});
+</script>
+
 </html>
