@@ -196,7 +196,6 @@
 		$("#daftarSekolah")[0].disabled = true
 		$.getJSON("PPDBMirror/seleksi/reguler/sma/" + ID + ".json")
 			.done(function (rawData) {
-				console.log(rawData)
 				$("#mainNilai")[0].innerHTML = ""
 				$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].Pagu + " (" + Math.round((rawData.data.length / dataSekolah[ID].Pagu) * 100) + "%)")
 				$.each(rawData.data, function (a, b) {
