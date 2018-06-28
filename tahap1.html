@@ -11,13 +11,13 @@
 	<title>PPDB Watcher - Tahap 1 Lokal</title>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49890594-3"></script>
 	<script>
-		window.dataLayer = window.dataLayer || [];
+		window.dataLayer = window.dataLayer || []
 
 		function gtag() {
-			dataLayer.push(arguments);
+			dataLayer.push(arguments)
 		}
-		gtag('js', new Date());
-		gtag('config', 'UA-49890594-3');
+		gtag('js', new Date())
+		gtag('config', 'UA-49890594-3')
 	</script>
 </head>
 
@@ -122,6 +122,7 @@
 					<th>Nama</th>
 					<th>NA</th>
 					<th>NUN</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody id="mainNilai">
@@ -137,6 +138,13 @@
 	var dataSekolah = {}
 	var tahapID = "1"
 
+	function errorFail() {
+		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form><br><p class=\"text-center\">Halaman ini akan memperbaharui dengan sendirinya dalam 5 detik.</p>")
+		setTimeout(function() { 
+			document.location.reload(true)
+		}, 5000)
+	}
+	
 	function initialize() {
 		$.get("https://cors.io/?https://reqres.in/api/users?page=1", function () {
 				initialize2("https://cors.io?")
@@ -154,7 +162,7 @@
 										initialize2("https://api.codetabs.com/cors-proxy/")
 									})
 									.fail(function () {
-										$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"><button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form>")
+										errorFail()
 									})
 							})
 					})
@@ -163,7 +171,7 @@
 
 	function initialize2(data) {
 		cors = data
-		dataSekolah1();
+		dataSekolah1()
 	}
 
 	function initializePost() {
@@ -179,7 +187,7 @@
 
 	function pad(u) {
 		var n = Number(u)
-		return (n < 10) ? '0' + u : u;
+		return (n < 10) ? '0' + u : u
 	}
 
 	function dataSekolah1() {
@@ -196,11 +204,14 @@
 							"SID": b.sekolah_id,
 							"KID": c.k_kompetensi
 						}
-					});
-				});
+					})
+				})
 				$("#daftarSekolah")[0].disabled = false
 				initializePost()
-			});
+			})  
+			.fail(function() {
+				errorFail()
+			})
 	}
 
 	function dataStats(ID) {
@@ -223,6 +234,7 @@
 		$("#autoUpdate")[0].disabled = true
 		$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
 			.done(function (rawData) {
+				console.log(rawData)
 				$("#mainNilai")[0].innerHTML = ""
 				$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].Pagu + " (" + Math.round((rawData.data.length / dataSekolah[ID].Pagu) * 100) + "%)")
 				$.each(rawData.data, function (a, b) {
@@ -232,14 +244,19 @@
 					$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/02000" + tahapID + "/detail/" + b[1] + "')\">" + b[2] + "</a></td>")
 					$("tr").last().append("<td>" + b[3] + "</td>")
 					$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
-				});
+					$("tr").last().append("<div style=\"margin: 9px auto 0px\" data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" title=\"<div class='text-left'>Pilihan: " + b[4] + "</br>Nilai B. Indonesia: " + b[5] + "</br>Nilai Matematika: " + b[6] + "</br>Nilai B. Inggris: " + b[7] + "</br>Nilai IPA: " + b[8] + "</br>Tanggal Lahir: " + b[9] + "</div>\"><span class=\"glyphicon glyphicon-info-sign\"></span></div>")
+				})
 				$("#daftarSekolah")[0].disabled = false
 				$("#daftarSekolahButton")[0].disabled = false
 				$("#autoUpdate")[0].disabled = false
 				var Now = new Date(Date.now())
 				$("#statLastUpd").html(pad(Now.getDate()) + "/" + pad(Now.getMonth()) + "/" + Now.getFullYear() + " " + pad(Now.getHours()) + ":" + pad(Now.getMinutes()) + ":" + pad(Now.getSeconds()))
 				postLoad()
-			});
+				$('[data-toggle="tooltip"]').tooltip()
+			})
+			.fail(function() {
+				$(".container").html(failHTML)
+			})
 	}
 
 	function postLoad() {
@@ -247,11 +264,11 @@
 		var Max = 0
 		var Min = 0
 		$.each($("#mainNilai")[0].children, function (a, b) {
-			Avg = Avg + Number(b.lastChild.innerHTML)
+			Avg = Avg + Number(b.children[4].innerHTML)
 		})
 		Avg = Avg / Number($("#mainNilai")[0].childElementCount)
-		Max = Number($("#mainNilai")[0].firstChild.lastChild.innerHTML)
-		Min = Number($("#mainNilai")[0].lastChild.lastChild.innerHTML)
+		Max = Number($("#mainNilai")[0].firstChild.children[4].innerHTML)
+		Min = Number($("#mainNilai")[0].lastChild.children[4].innerHTML)
 		$("#statAvg").html((Avg / 4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
 		$("#statMax").html((Max / 4).toFixed(2) + " (" + Max.toFixed(2) + ")")
 		$("#statMin").html((Min / 4).toFixed(2) + " (" + Min.toFixed(2) + ")")
@@ -263,9 +280,9 @@
 			chartNilai.push(b.children[3].innerHTML)
 		})
 		if (typeof lineChart !== "undefined") {
-			lineChart.destroy();
+			lineChart.destroy()
 		}
-		var ctx = $("#chart");
+		var ctx = $("#chart")
 		lineChart = new Chart($("#chart"), {
 			type: 'line',
 			data: {
@@ -290,14 +307,14 @@
 					}]
 				}
 			}
-		});
+		})
 	}
 
 	$("#autoUpdate")[0].checked = false
 	$("#daftarSekolah")[0].disabled = true
 	$("#daftarSekolahButton")[0].disabled = true
 	$("#autoUpdate")[0].disabled = true
-	initialize();
+	initialize()
 
 	function loadHasil() {
 		if (nowID.length > 0) {
@@ -334,10 +351,10 @@
 	}
 
 	var time = moment.tz("2018-06-28 14:00", "Asia/Jakarta")
-	var $clock = $('#clock');
+	var $clock = $('#clock')
 	$clock.countdown(time.toDate(), function (event) {
-		$(this).html(event.strftime('%D:%H:%M:%S'));
-	});
+		$(this).html(event.strftime('%D:%H:%M:%S'))
+	})
 </script>
 
 </html>
