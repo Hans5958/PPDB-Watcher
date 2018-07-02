@@ -110,7 +110,7 @@
 					<div class="input-group pull-right">
 						<input type="text" class="form-control" value="" placeholder="Pranala (link)" id="copy-input">
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="copy">Salin</button>
+							<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="Salin pranala (link)">Salin</button>
 						</span>
 					</div>
 				</form>
@@ -139,31 +139,23 @@
 	var tahapID = "3"
 
 	function errorFail() {
-		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form><br><p class=\"text-center\">Halaman ini akan memperbaharui dengan sendirinya dalam 5 detik.</p>")
-		setTimeout(function() { 
-			document.location.reload(true)
-		}, 5000)
+		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form>")
 	}
 	
 	function initialize() {
-		$.get("https://cors.io/?https://reqres.in/api/users?page=1", function () {
+		$.get("https://cors.io/?https://ppdb.jakarta.go.id/index.json", function () {
 				initialize2("https://cors.io?")
 			})
 			.fail(function () {
-				$.get("https://api.codetabs.com/cors-proxy/https://reqres.in/api/users?page=2", function () {
+				$.get("https://api.codetabs.com/cors-proxy/https://ppdb.jakarta.go.id/index.json", function () {
 						initialize2("https://api.codetabs.com/cors-proxy/")
 					})
 					.fail(function () {
-						$.get("https://cors.io/?http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
-								initialize2("https://cors.io?")
+						$.get("https://jsonp.afeld.me/?url=https://ppdb.jakarta.go.id/index.json", function () {
+								initialize2("https://jsonp.afeld.me/?url=")
 							})
 							.fail(function () {
-								$.get("https://api.codetabs.com/cors-proxy/http://www.mocky.io/v2/5b321e073400004f003fd284", function () {
-										initialize2("https://api.codetabs.com/cors-proxy/")
-									})
-									.fail(function () {
-										errorFail()
-									})
+									errorFail()
 							})
 					})
 			})
@@ -255,7 +247,7 @@
 				$('[data-toggle="tooltip"]').tooltip()
 			})
 			.fail(function() {
-				$(".container").html(failHTML)
+				errorFail()
 			})
 	}
 
