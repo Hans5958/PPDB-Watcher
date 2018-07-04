@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="require.js"></script>
+	<title>PPDB Watcher - Tahap 1 Lokal</title>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49890594-3"></script>
+	<script>
+		window.dataLayer = window.dataLayer || []
+
+		function gtag() {
+			dataLayer.push(arguments)
+		}
+		gtag('js', new Date())
+		gtag('config', 'UA-49890594-3')
+	</script>
+</head>
+
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="index.html">PPDB Watcher</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Tahap 1 Lokal</a></li>
+				<li><a href="tahap2.html">Tahap 2 Umum</a></li>
+				<li><a href="tahap3.html">Tahap 3 Umum</a></li>
+				<li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Grafik<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="grafiknilai.html">Nilai</a></li>
+						<li><a href="grafikpagu.html">Pagu (Kursi/Bangku)</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<h1>PPDB Watcher <small>Tahap 1 Lokal</small></h1>
+				<br>
+				<p>Pilih sekolah yang ingin dilihat.</p>
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="daftarSekolah">Sekolah:</label>
+						<select class="form-control" id="daftarSekolah">
+							<option value="">Pilih sekolah...</option>
+						</select>
+					</div>
+				</form>
+				<br>
+				<h4>Pendaftaran Selesai</h4>
+				<p>Data berikut telah diarsip di halaman web ini untuk dapat digunakan seperlunya.</p>
+				<br>
+				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
+				<br>
+				<br>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<a onclick="postLoad()"><button type="button" class="btn btn-info">Rip All!</button></a>
+				<h3 style="margin-bottom=0">URL Count</h3>
+				<h4 id="rip1"></h4>
+				<h3 style="margin-bottom=0">Selection Number</h3>
+				<h4 id="rip2"></h4>
+				<h3 style="margin-bottom=0">Last URL</h3>
+				<h4 id="rip3"></h4>
+			</div>
+		</div>
+		<pre id="url"></pre>
+	</div>
+</body>
+
+<script>
+	var nowID = ""
+	var dataSekolah = {}
+	var tahapID = "1"
+	var count = 0
+	var lastURL = ""
+	var theArray = []
+	var theString = ""
+
+	function initializePost() {
+		$("#daftarSekolah").val("")
+	}
+
+	function pad(u) {
+		var n = Number(u)
+		return (n < 10) ? '0' + u : u
+	}
+
+	function dataSekolah1() {
+		$.getJSON("PPDBMirror/pagu/" + tahapID + "-sma-reguler.json")
+			.done(function (r) {
+				$.each(r.data, function (a, b) {
+					$.each(b.kompetensi, function (a, c) {
+						var MainID = tahapID + "-" + b.sekolah_id + "-" + c.k_kompetensi
+						$("#daftarSekolah").append("<option value=\"" + MainID + "\">" + b.nama + " - " + c.kompetensi + "</option>")
+						dataSekolah[MainID] = {
+							"Nama": b.nama,
+							"Komp": c.kompetensi,
+							"Pagu": c.pagu,
+							"SID": b.sekolah_id,
+							"KID": c.k_kompetensi
+						}
+					})
+				})
+				$("#daftarSekolah")[0].disabled = false
+				initializePost()
+			})  
+			.fail(function() {
+				errorFail()
+			})
+	}
+
+	function dataSeleksi(ID) {
+		$("#daftarSekolah")[0].disabled = true
+		$.getJSON("PPDBMirror/seleksi/reguler/sma/" + ID + ".json")
+			.done(function (rawData) {
+				$.each(rawData.data, function (a, b) {
+					//$("#url")[0].innerHTML += "https://api-jkt.siap-ppdb.com/cari?no_daftar=" + b[1] + "\n"
+					//theArray.push("https://api-jkt.siap-ppdb.com/cari?no_daftar=" + b[1] + "\n")
+					theString += "https://api-jkt.siap-ppdb.com/cari?no_daftar=" + b[1] + "\n"
+					count++
+					lastURL = "https://api-jkt.siap-ppdb.com/cari?no_daftar=" + b[1] + "\n"
+				})
+				$("#daftarSekolah")[0].disabled = false
+				postLoad()
+			})
+	}
+
+	function postLoad() {
+		$("#rip1")[0].innerHTML = count
+		$("#rip2")[0].innerHTML = $("#daftarSekolah")[0].selectedIndex
+		$("#rip3")[0].innerHTML = lastURL
+		if ($("#daftarSekolah")[0].selectedIndex !== -1) {
+			$("#daftarSekolah")[0].selectedIndex++
+			nowID = $("#daftarSekolah")[0].value
+			dataSeleksi(nowID)
+		} else {
+			console.log("Done!")
+			$("#url")[0].innerHTML = theString
+		}
+	}
+
+	$("#daftarSekolah")[0].disabled = true
+	dataSekolah1()
+	
+	function loadHasil() {
+		if (nowID.length > 0) {
+			dataSeleksi(nowID)
+			dataStats(nowID)
+		}
+	}
+</script>
+
+</html>

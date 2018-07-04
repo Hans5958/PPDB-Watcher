@@ -122,8 +122,6 @@
 			</tbody>
 		</table>
 		<canvas height="100px" id="chart"></canvas>
-		<br>
-		<div id="url"></div>
 	</div>
 </body>
 
@@ -202,7 +200,7 @@
 					$("#mainNilai").append("<tr></tr>")
 					$("tr").last().append("<td><strong>" + b[0] + "</strong></td>")
 					$("tr").last().append("<td>" + b[1] + "</td>")
-					$("tr").last().append("<td>" + b[2] + "</td>")
+					$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/detail/" + b[1] + "')\">" + b[2] + "</a></td>")
 					$("tr").last().append("<td>" + b[3] + "</td>")
 					$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
 					$("tr").last().append("<div style=\"margin: 9px auto 0px\" data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" title=\"<div class='text-left'>Pilihan: " + b[4] + "</br>Nilai B. Indonesia: " + b[5] + "</br>Nilai Matematika: " + b[6] + "</br>Nilai B. Inggris: " + b[7] + "</br>Nilai IPA: " + b[8] + "</br>Tanggal Lahir: " + b[9] + "</div>\"><span class=\"glyphicon glyphicon-info-sign\"></span></div>")
