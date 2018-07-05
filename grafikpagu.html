@@ -87,7 +87,7 @@
 	function errorFail() {
 		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form>")
 	}
-	
+
 	function initialize() {
 		$.get("https://cors.io/?https://ppdb.jakarta.go.id/index.json", function () {
 				initialize2("https://cors.io?")
@@ -130,7 +130,7 @@
 			.fail(function() {
 				$(".container").html(failHTML)
 			})
-		$.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/2-sma-reguler.json")
+		$.getJSON("PPDBMirror/pagu/2-sma-reguler.json")
             .done(function (r) {
 				$.each(r.data, function (a, b) {
 					$.each(b.kompetensi, function (a, c) {
