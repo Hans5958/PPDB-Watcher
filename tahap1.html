@@ -58,7 +58,7 @@
 				<h4>Pendaftaran Selesai</h4>
 				<p>Data berikut telah diarsip di halaman web ini untuk dapat digunakan seperlunya.</p>
 				<br>
-				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
+				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/" target="_blank">https://ppdb.jakarta.go.id/</a></em>
 				<br>
 				<br>
 			</div>
@@ -97,8 +97,8 @@
 					</tbody>
 				</table>
 				<form class="form-inline">
-					<a href="#" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
-					<a href="#" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
+					<a href="#" target="_blank" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
+					<a href="#" target="_blank" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
 					<div class="input-group pull-right">
 						<input type="text" class="form-control" value="" placeholder="Pranala (link)" id="copy-input">
 						<span class="input-group-btn">
@@ -131,10 +131,7 @@
 	var tahapID = "1"
 
 	function errorFail() {
-		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form><br><p class=\"text-center\">Halaman ini akan memperbaharui dengan sendirinya dalam 5 detik.</p>")
-		setTimeout(function() { 
-			document.location.reload(true)
-		}, 5000)
+		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form></p>")
 	}
 
 	function initializePost() {
@@ -171,7 +168,7 @@
 				})
 				$("#daftarSekolah")[0].disabled = false
 				initializePost()
-			})  
+			})
 			.fail(function() {
 				errorFail()
 			})
@@ -182,8 +179,8 @@
 		$("#statNama").html(dataSekolah[ID].Nama)
 		$("#statKomp").html(dataSekolah[ID].Komp)
 		$("#statPagu").html("0/" + dataSekolah[ID].Pagu)
-		$("#statSekLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/statistik/detail/" + dataSekolah[ID].SID + "')")
-		$("#statHasilLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil/seleksi/" + dataSekolah[ID].SID + "/" + dataSekolah[ID].KID + "/1/simple')")
+		$("#statSekLengkap").attr("href", "https://ppdb.jakarta.go.id/#/03000" + tahapID + "/statistik/detail/" + dataSekolah[ID].SID)
+		$("#statHasilLengkap").attr("href", "https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil/seleksi/" + dataSekolah[ID].SID + "/" + dataSekolah[ID].KID + "/1/simple")
 		$("#statAvg").html("")
 		$("#statMax").html("")
 		$("#statMin").html("")
@@ -200,7 +197,7 @@
 					$("#mainNilai").append("<tr></tr>")
 					$("tr").last().append("<td><strong>" + b[0] + "</strong></td>")
 					$("tr").last().append("<td>" + b[1] + "</td>")
-					$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/detail/" + b[1] + "')\">" + b[2] + "</a></td>")
+					$("tr").last().append("<td><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/detail/" + b[1] + "\" target=\"_blank\">" + b[2] + "</a></td>")
 					$("tr").last().append("<td>" + b[3] + "</td>")
 					$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
 					$("tr").last().append("<div style=\"margin: 9px auto 0px\" data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" title=\"<div class='text-left'>Pilihan: " + b[4] + "</br>Nilai B. Indonesia: " + b[5] + "</br>Nilai Matematika: " + b[6] + "</br>Nilai B. Inggris: " + b[7] + "</br>Nilai IPA: " + b[8] + "</br>Tanggal Lahir: " + b[9] + "</div>\"><span class=\"glyphicon glyphicon-info-sign\"></span></div>")
@@ -267,7 +264,7 @@
 
 	$("#daftarSekolah")[0].disabled = true
 	dataSekolah1()
-	
+
 	function loadHasil() {
 		if (nowID.length > 0) {
 			dataSeleksi(nowID)
