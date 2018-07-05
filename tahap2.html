@@ -54,21 +54,14 @@
 							<option value="">Pilih sekolah...</option>
 						</select>
 					</div>
-					<button type="button" class="btn btn-default btn-sm" id="daftarSekolahButton">
-						<span class="glyphicon glyphicon-refresh"></span> Refresh
-					</button>
-					<div class="checkbox">
-						<label><input id="autoUpdate" type="checkbox" value="" checked="false"> <span class="glyphicon glyphicon-refresh"></span> Auto-update</label>
-					</div>
 				</form>
 				<br>
-				<h4>Sisa Waktu Pendaftaran <small>4 Juli 2018. 14:00 WIB</small></h4>
-					<h3 style="margin-top:0" id="clock">
-						</h5>
-						<br>
-						<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/">https://ppdb.jakarta.go.id/</a></em>
-						<br>
-						<br>
+				<h4>Pendaftaran Selesai</h4>
+				<p>Data berikut telah diarsip di halaman web ini untuk dapat digunakan seperlunya.</p>
+				<br>
+				<em>Data yang diambil adalah data resmi dari <a href="https://ppdb.jakarta.go.id/" target="_blank">https://ppdb.jakarta.go.id/</a></em>
+				<br>
+				<br>
 			</div>
 			<div class="col-xs-12 col-sm-6">
 				<h4>Keterangan</h4>
@@ -100,13 +93,13 @@
 						</tr>
 						<tr>
 							<th>Data Terakhir</th>
-							<th id="statLastUpd"></th>
+							<th id="statLastUpd">04/07/2018 16:00:00 WIB</th>
 						</tr>
 					</tbody>
 				</table>
 				<form class="form-inline">
-					<a href="#" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
-					<a href="#" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
+					<a href="#" target="_blank" id="statSekLengkap"><button type="button" class="btn btn-info">Info Sekolah</button></a>
+					<a href="#" target="_blank" id="statHasilLengkap"><button type="button" class="btn btn-info">Hasil Seleksi Asli</button></a>
 					<div class="input-group pull-right">
 						<input type="text" class="form-control" value="" placeholder="Pranala (link)" id="copy-input">
 						<span class="input-group-btn">
@@ -133,219 +126,166 @@
 </body>
 
 <script>
-	var nowID = ""
-	var dataSekolah = {}
-	var tahapID = "2"
+var nowID = ""
+var dataSekolah = {}
+var tahapID = "2"
 
-	function errorFail() {
-		$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form>")
-	}
-	
-	function initialize() {
-		$.get("https://cors.io/?https://ppdb.jakarta.go.id/index.json", function () {
-				initialize2("https://cors.io?")
-			})
-			.fail(function () {
-				$.get("https://api.codetabs.com/cors-proxy/https://ppdb.jakarta.go.id/index.json", function () {
-						initialize2("https://api.codetabs.com/cors-proxy/")
-					})
-					.fail(function () {
-						$.get("https://jsonp.afeld.me/?url=https://ppdb.jakarta.go.id/index.json", function () {
-								initialize2("https://jsonp.afeld.me/?url=")
-							})
-							.fail(function () {
-									errorFail()
-							})
-					})
-			})
-	}
+function errorFail() {
+	$(".container").html("<p class=\"text-center\">Maaf, PPDB Watcher memiliki kendala teknis. Silahkan coba lagi.</p><form class=\"form-inline text-center\"><a href=\"#\" onclick=\"document.location.reload(true)\"><button type=\"button\" class=\"btn btn-info\">Coba Lagi</button></a><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil\"> <button type=\"button\" class=\"btn btn-info\">Ke Halaman Hasil Seleksi Asli</button></a></form></p>")
+}
 
-	function initialize2(data) {
-		cors = data
-		dataSekolah1()
+function initializePost() {
+	nowID = window.location.hash.substring(1)
+	$("#daftarSekolah").val(nowID)
+	if ($("#daftarSekolah option[value=" + nowID + "]").length > 0) {
+		loadHasil()
+	} else {
+		nowID = ""
+		$("#daftarSekolah").val("")
 	}
+}
 
-	function initializePost() {
-		nowID = window.location.hash.substring(1)
-		$("#daftarSekolah").val(nowID)
-		if ($("#daftarSekolah option[value=" + nowID + "]").length > 0) {
-			loadHasil()
-		} else {
-			nowID = ""
-			$("#daftarSekolah").val("")
-		}
-	}
+function pad(u) {
+	var n = Number(u)
+	return (n < 10) ? '0' + u : u
+}
 
-	function pad(u) {
-		var n = Number(u)
-		return (n < 10) ? '0' + u : u
-	}
-
-	function dataSekolah1() {
-		$.getJSON(cors + "https://ppdb.jakarta.go.id/pagu/" + tahapID + "-sma-reguler.json")
-			.done(function (r) {
-				$.each(r.data, function (a, b) {
-					$.each(b.kompetensi, function (a, c) {
-						var MainID = tahapID + "-" + b.sekolah_id + "-" + c.k_kompetensi
-						$("#daftarSekolah").append("<option value=\"" + MainID + "\">" + b.nama + " - " + c.kompetensi + "</option>")
-						dataSekolah[MainID] = {
-							"Nama": b.nama,
-							"Komp": c.kompetensi,
-							"Pagu": c.pagu,
-							"SID": b.sekolah_id,
-							"KID": c.k_kompetensi
-						}
-					})
+function dataSekolah1() {
+	$.getJSON("PPDBMirror/pagu/" + tahapID + "-sma-reguler.json")
+		.done(function (r) {
+			$.each(r.data, function (a, b) {
+				$.each(b.kompetensi, function (a, c) {
+					var MainID = tahapID + "-" + b.sekolah_id + "-" + c.k_kompetensi
+					$("#daftarSekolah").append("<option value=\"" + MainID + "\">" + b.nama + " - " + c.kompetensi + "</option>")
+					dataSekolah[MainID] = {
+						"Nama": b.nama,
+						"Komp": c.kompetensi,
+						"Pagu": c.pagu,
+						"SID": b.sekolah_id,
+						"KID": c.k_kompetensi
+					}
 				})
-				$("#daftarSekolah")[0].disabled = false
-				initializePost()
-			})  
-			.fail(function() {
-				errorFail()
 			})
-	}
+			$("#daftarSekolah")[0].disabled = false
+			initializePost()
+		})
+		.fail(function() {
+			errorFail()
+		})
+}
 
-	function dataStats(ID) {
-		window.location.hash = ID
-		$("#statNama").html(dataSekolah[ID].Nama)
-		$("#statKomp").html(dataSekolah[ID].Komp)
-		$("#statPagu").html("0/" + dataSekolah[ID].Pagu)
-		$("#statSekLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/statistik/detail/" + dataSekolah[ID].SID + "')")
-		$("#statHasilLengkap").attr("onclick", "window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil/seleksi/" + dataSekolah[ID].SID + "/" + dataSekolah[ID].KID + "/1/simple')")
-		$("#statLastUpd").html("")
-		$("#statAvg").html("")
-		$("#statMax").html("")
-		$("#statMin").html("")
-		$("#copy-input").val(document.location.href)
-	}
+function dataStats(ID) {
+	window.location.hash = ID
+	$("#statNama").html(dataSekolah[ID].Nama)
+	$("#statKomp").html(dataSekolah[ID].Komp)
+	$("#statPagu").html("0/" + dataSekolah[ID].Pagu)
+	$("#statSekLengkap").attr("href", "https://ppdb.jakarta.go.id/#/03000" + tahapID + "/statistik/detail/" + dataSekolah[ID].SID)
+	$("#statHasilLengkap").attr("href", "https://ppdb.jakarta.go.id/#/03000" + tahapID + "/hasil/seleksi/" + dataSekolah[ID].SID + "/" + dataSekolah[ID].KID + "/1/simple")
+	$("#statAvg").html("")
+	$("#statMax").html("")
+	$("#statMin").html("")
+	$("#copy-input").val(document.location.href)
+}
 
-	function dataSeleksi(ID) {
-		$("#daftarSekolah")[0].disabled = true
+function dataSeleksi(ID) {
+	$("#daftarSekolah")[0].disabled = true
+	$.getJSON("PPDBMirror/seleksi/reguler/sma/" + ID + ".json")
+		.done(function (rawData) {
+			$("#mainNilai")[0].innerHTML = ""
+			$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].Pagu + " (" + Math.round((rawData.data.length / dataSekolah[ID].Pagu) * 100) + "%)")
+			$.each(rawData.data, function (a, b) {
+				$("#mainNilai").append("<tr></tr>")
+				$("tr").last().append("<td><strong>" + b[0] + "</strong></td>")
+				$("tr").last().append("<td>" + b[1] + "</td>")
+				$("tr").last().append("<td><a href=\"https://ppdb.jakarta.go.id/#/03000" + tahapID + "/detail/" + b[1] + "\" target=\"_blank\">" + b[2] + "</a></td>")
+				$("tr").last().append("<td>" + b[3] + "</td>")
+				$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
+				$("tr").last().append("<div style=\"margin: 9px auto 0px\" data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" title=\"<div class='text-left'>Pilihan: " + b[4] + "</br>Nilai B. Indonesia: " + b[5] + "</br>Nilai Matematika: " + b[6] + "</br>Nilai B. Inggris: " + b[7] + "</br>Nilai IPA: " + b[8] + "</br>Tanggal Lahir: " + b[9] + "</div>\"><span class=\"glyphicon glyphicon-info-sign\"></span></div>")
+			})
+			$("#daftarSekolah")[0].disabled = false
+			postLoad()
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+		.fail(function() {
+			$(".container").html(failHTML)
+		})
+}
+
+function postLoad() {
+	var Avg = 0
+	var Max = 0
+	var Min = 0
+	$.each($("#mainNilai")[0].children, function (a, b) {
+		Avg = Avg + Number(b.children[4].innerHTML)
+	})
+	Avg = Avg / Number($("#mainNilai")[0].childElementCount)
+	Max = Number($("#mainNilai")[0].firstChild.children[4].innerHTML)
+	Min = Number($("#mainNilai")[0].lastChild.children[4].innerHTML)
+	$("#statAvg").html((Avg / 4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
+	$("#statMax").html((Max / 4).toFixed(2) + " (" + Max.toFixed(2) + ")")
+	$("#statMin").html((Min / 4).toFixed(2) + " (" + Min.toFixed(2) + ")")
+
+	var chartLabel = []
+	var chartNilai = []
+	$.each($("#mainNilai")[0].children, function (a, b) {
+		chartLabel.push(b.children[2].lastChild.innerHTML)
+		chartNilai.push(b.children[3].innerHTML)
+	})
+	if (typeof lineChart !== "undefined") {
+		lineChart.destroy()
+	}
+	var ctx = $("#chart")
+	lineChart = new Chart($("#chart"), {
+		type: 'line',
+		data: {
+			labels: chartLabel,
+			datasets: [{
+				data: chartNilai,
+				backgroundColor: 'rgba(0, 0, 0, 0)',
+				borderColor: 'rgba(0, 181, 255, 1)',
+				borderWidth: 1,
+				tooltip: false
+			}]
+		},
+		options:{
+			legend: {
+				display: false
+			},
+			scales: {
+				xAxes: [{
+					ticks: {
+						display: false
+					}
+				}]
+			}
+		}
+	})
+}
+
+$("#daftarSekolah")[0].disabled = true
+dataSekolah1()
+
+function loadHasil() {
+	if (nowID.length > 0) {
+		dataSeleksi(nowID)
+		dataStats(nowID)
+	}
+}
+
+$("#daftarSekolah")[0].onchange = function () {
+	nowID = this.value
+	if (nowID.length > 0) {
+		loadHasil()
+	} else {
 		$("#daftarSekolahButton")[0].disabled = true
 		$("#autoUpdate")[0].disabled = true
-		$.getJSON(cors + "https://ppdb.jakarta.go.id/seleksi/reguler/sma/" + ID + ".json")
-			.done(function (rawData) {
-				console.log(rawData)
-				$("#mainNilai")[0].innerHTML = ""
-				$("#statPagu").html(rawData.data.length + "/" + dataSekolah[ID].Pagu + " (" + Math.round((rawData.data.length / dataSekolah[ID].Pagu) * 100) + "%)")
-				$.each(rawData.data, function (a, b) {
-					$("#mainNilai").append("<tr></tr>")
-					$("tr").last().append("<td><strong>" + b[0] + "</strong></td>")
-					$("tr").last().append("<td>" + b[1] + "</td>")
-					$("tr").last().append("<td><a href=\"#\" onclick=\"window.open('https://ppdb.jakarta.go.id/#/03000" + tahapID + "/detail/" + b[1] + "')\">" + b[2] + "</a></td>")
-					$("tr").last().append("<td>" + b[3] + "</td>")
-					$("tr").last().append("<td>" + (Number(b[5]) + Number(b[6]) + Number(b[7]) + Number(b[8])).toFixed(2) + "</td>")
-					$("tr").last().append("<div style=\"margin: 9px auto 0px\" data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" title=\"<div class='text-left'>Pilihan: " + b[4] + "</br>Nilai B. Indonesia: " + b[5] + "</br>Nilai Matematika: " + b[6] + "</br>Nilai B. Inggris: " + b[7] + "</br>Nilai IPA: " + b[8] + "</br>Tanggal Lahir: " + b[9] + "</div>\"><span class=\"glyphicon glyphicon-info-sign\"></span></div>")
-				})
-				$("#daftarSekolah")[0].disabled = false
-				$("#daftarSekolahButton")[0].disabled = false
-				$("#autoUpdate")[0].disabled = false
-				var Now = new Date(Date.now())
-				$("#statLastUpd").html(pad(Now.getDate()) + "/" + pad(Now.getMonth()) + "/" + Now.getFullYear() + " " + pad(Now.getHours()) + ":" + pad(Now.getMinutes()) + ":" + pad(Now.getSeconds()))
-				postLoad()
-				$('[data-toggle="tooltip"]').tooltip()
-			})
-			.fail(function() {
-				errorFail()
-			})
 	}
+}
 
-	function postLoad() {
-		var Avg = 0
-		var Max = 0
-		var Min = 0
-		$.each($("#mainNilai")[0].children, function (a, b) {
-			Avg = Avg + Number(b.children[4].innerHTML)
-		})
-		Avg = Avg / Number($("#mainNilai")[0].childElementCount)
-		Max = Number($("#mainNilai")[0].firstChild.children[4].innerHTML)
-		Min = Number($("#mainNilai")[0].lastChild.children[4].innerHTML)
-		$("#statAvg").html((Avg / 4).toFixed(2) + " (" + Avg.toFixed(2) + ")")
-		$("#statMax").html((Max / 4).toFixed(2) + " (" + Max.toFixed(2) + ")")
-		$("#statMin").html((Min / 4).toFixed(2) + " (" + Min.toFixed(2) + ")")
-
-		var chartLabel = []
-		var chartNilai = []
-		$.each($("#mainNilai")[0].children, function (a, b) {
-			chartLabel.push(b.children[2].lastChild.innerHTML)
-			chartNilai.push(b.children[3].innerHTML)
-		})
-		if (typeof lineChart !== "undefined") {
-			lineChart.destroy()
-		}
-		var ctx = $("#chart")
-		lineChart = new Chart($("#chart"), {
-			type: 'line',
-			data: {
-				labels: chartLabel,
-				datasets: [{
-					data: chartNilai,
-					backgroundColor: 'rgba(0, 0, 0, 0)',
-					borderColor: 'rgba(0, 181, 255, 1)',
-					borderWidth: 1,
-					tooltip: false
-				}]
-			},
-			options:{
-				legend: {
-					display: false
-				},
-				scales: {
-					xAxes: [{
-						ticks: {
-							display: false
-						}
-					}]
-				}
-			}
-		})
-	}
-
-	$("#autoUpdate")[0].checked = false
-	$("#daftarSekolah")[0].disabled = true
-	$("#daftarSekolahButton")[0].disabled = true
-	$("#autoUpdate")[0].disabled = true
-	initialize()
-
-	function loadHasil() {
-		if (nowID.length > 0) {
-			dataSeleksi(nowID)
-			dataStats(nowID)
-		}
-	}
-
-	$("#daftarSekolah")[0].onchange = function () {
-		nowID = this.value
-		if (nowID.length > 0) {
-			loadHasil()
-		} else {
-			$("#daftarSekolahButton")[0].disabled = true
-			$("#autoUpdate")[0].disabled = true
-		}
-	}
-
-	$("#daftarSekolahButton")[0].onclick = function () {
-		loadHasil()
-	}
-
-	$("#autoUpdate")[0].onclick = function () {
-		if (this.checked) {
-			var autoUpd = setInterval(loadHasil, 5000)
-		} else {
-			document.location.reload(true)
-		}
-	}
-
-	$("#copy-button")[0].onclick = function () {
-		$('#copy-input')[0].select()
-		document.execCommand("copy")
-	}
-
-	var time = moment.tz("2018-07-04 14:00", "Asia/Jakarta")
-	var $clock = $('#clock')
-	$clock.countdown(time.toDate(), function (event) {
-		$(this).html(event.strftime('%D:%H:%M:%S'))
-	})
+$("#copy-button")[0].onclick = function () {
+	$('#copy-input')[0].select()
+	document.execCommand("copy")
+}
 </script>
 
 </html>
